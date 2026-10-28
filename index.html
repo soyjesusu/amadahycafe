@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amadahy Café · Tienda</title>
+<meta name="description" content="Tostaduría en Caracas con café de origen de distintas zonas productoras de Venezuela. Empaques para tostadores, miel, mermeladas, cursos y servicios de tostión.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2b24;--bosque:#2f5d46;--cereza:#a3202f;--oro:#c79a3b;--niebla:#eef1ec;--blanco:#fff;--linea:#cdd5cc;--r:10px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:400 16px/1.55 Figtree,system-ui,sans-serif;color:var(--ink);background:var(--niebla)}
+h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400;line-height:1.15;margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--niebla)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{font-family:"Young Serif",serif;font-size:22px}
+.cartbtn{background:var(--cereza);color:#fff;border:0;border-radius:99px;padding:8px 16px;font-weight:700}
+.hero{background:var(--bosque);color:var(--niebla);padding:48px 0 40px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(34px,5vw,56px);margin-bottom:14px}
+.hero p{max-width:44ch;margin:0 0 20px;opacity:.92}
+.cta{display:inline-block;background:var(--oro);color:var(--ink);border:0;border-radius:99px;padding:12px 22px;font-weight:700;text-decoration:none}
+.alt{display:grid;gap:8px}
+.alt h2{font-size:18px;margin-bottom:4px}
+.alt button{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;text-align:left;background:none;border:0;color:inherit;padding:2px 0}
+.alt .bar{height:26px;background:rgba(255,255,255,.14);border-radius:4px;overflow:hidden}
+.alt .bar i{display:block;height:100%;background:var(--oro);color:var(--ink);font:700 13px/26px Figtree;padding-left:8px;font-style:normal;white-space:nowrap}
+.alt button:hover .bar i{background:#e0b457}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;align-items:center}
+.tabs button{border:1px solid var(--linea);background:var(--blanco);border-radius:99px;padding:7px 16px}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs input{margin-left:auto;border:1px solid var(--linea);border-radius:99px;padding:7px 14px;min-width:200px}
+.note{background:#f7ecd0;border-left:4px solid var(--oro);padding:10px 14px;border-radius:6px;margin:12px 0;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin:16px 0 56px}
+.card{background:var(--blanco);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--linea)}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--niebla)}
+.card .in{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card h3{font-size:16px;font-family:Figtree;font-weight:700}
+.card p{margin:0;font-size:14px;opacity:.8}
+.card select{border:1px solid var(--linea);border-radius:6px;padding:6px;background:#fff;width:100%}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:6px}
+.price{font:400 22px "Young Serif",serif}
+.add{background:var(--bosque);color:#fff;border:0;border-radius:99px;padding:8px 16px;font-weight:700}
+.add:hover{background:var(--ink)}
+aside{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--blanco);z-index:40;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+aside.open{transform:none}
+aside header{position:static;background:var(--ink)}
+.items{flex:1;overflow:auto;padding:14px 18px}
+.row{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-bottom:1px solid var(--linea);font-size:15px}
+.row small{opacity:.7;grid-column:1}
+.row input{width:64px;border:1px solid var(--linea);border-radius:6px;padding:4px}
+.row button{background:none;border:0;color:var(--cereza);text-align:right}
+form{padding:14px 18px;border-top:1px solid var(--linea);display:grid;gap:8px;background:var(--niebla)}
+form input,form select,form textarea{width:100%;border:1px solid var(--linea);border-radius:6px;padding:8px;background:#fff}
+.tot{display:flex;justify-content:space-between;font-weight:700;font-size:18px}
+.send{background:#1f9d55;color:#fff;border:0;border-radius:99px;padding:12px;font-weight:700}
+.msg{padding:14px 18px;background:#e3f1e8;font-weight:500}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30;display:none}
+.shade.open{display:block}
+footer{background:var(--ink);color:var(--niebla);padding:28px 0;font-size:14px}
+footer a{color:var(--oro)}
+.empty{padding:30px 0;opacity:.7}
+@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.alt button{grid-template-columns:110px 1fr}.tabs input{margin-left:0;width:100%}}
+@media(prefers-reduced-motion:reduce){aside{transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="brand">Amadahy Café</span><button class="cartbtn" id="openCart">Carrito (<span id="cnt">0</span>)</button></div></header>
+
+<section class="hero"><div class="wrap">
+  <div>
+    <h1>Café de origen venezolano, tostado en Caracas</h1>
+    <p>Somos una tostaduría en Caracas. Procesamos café de origen de distintas zonas productoras de Venezuela: Mérida, Trujillo, Lara y Barinas. También vendemos empaques para tostadores, miel, mermeladas y cursos de barismo.</p>
+    <a class="cta" href="#catalogo">Ver el catálogo</a>
+  </div>
+  <div class="alt" aria-label="Orígenes por altitud">
+    <h2>Orígenes de nuestros cafés, por altitud</h2>
+    <button data-q="Santa Cruz"><span>Santa Cruz de Mora</span><span class="bar"><i style="width:100%">1.800 msnm</i></span></button>
+    <button data-q="Mocoties"><span>Mocoties</span><span class="bar"><i style="width:100%">1.800 msnm</i></span></button>
+    <button data-q="Bocon"><span>Boconó</span><span class="bar"><i style="width:89%">1.600 msnm</i></span></button>
+    <button data-q="Humocaro"><span>Humocaro</span><span class="bar"><i style="width:78%">1.400 msnm</i></span></button>
+  </div>
+</div></section>
+
+<main class="wrap" id="catalogo">
+  <div class="tabs" id="tabs"></div>
+  <div class="note" id="note" hidden></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer><div class="wrap">
+  Distribuidora de Alimentos Rey Salomón C.A · RIF J-40006967-0 · Urb. Valle Abajo Sur, Los Próceres, Caracas · Lunes a viernes, 9:00 a. m. a 4:00 p. m.<br>
+  <a href="https://instagram.com/amadahycafe">@amadahycafe</a> · <a href="mailto:amadahycafe@gmail.com">amadahycafe@gmail.com</a>
+  <span id="adminLink"></span>
+</div></footer>
+
+<div class="shade" id="shade"></div>
+<aside id="cart" aria-label="Carrito">
+  <header><div class="wrap" style="padding:0 18px"><span class="brand">Tu pedido</span><button class="cartbtn" id="closeCart">Cerrar</button></div></header>
+  <div class="items" id="items"></div>
+  <div class="msg" id="done" hidden></div>
+  <form id="f">
+    <div class="tot"><span>Total</span><span id="total">$0,00</span></div>
+    <input name="nombre" placeholder="Nombre y apellido" required autocomplete="name">
+    <input name="tel" placeholder="Teléfono / WhatsApp" required autocomplete="tel" inputmode="tel">
+    <textarea name="dir" rows="2" placeholder="Dirección de entrega o “retiro en tienda”" required></textarea>
+    <select name="pago" required>
+      <option value="">Forma de pago</option>
+      <option>Pago móvil</option><option>Zelle</option><option>Transferencia</option><option>Efectivo USD</option>
+    </select>
+    <button class="send" type="submit">Enviar pedido por WhatsApp</button>
+  </form>
+</aside>
+
+<script>
+/* ====== CONFIGURACIÓN ====== */
+const CFG={
+  whatsapp:"584242625441",
+  // Pega aquí tu configuración de Firebase (Consola > Configuración del proyecto > Tus apps > Web).
+  // Si apiKey queda vacío, los pedidos solo se envían por WhatsApp.
+  firebase:{apiKey:"",authDomain:"",projectId:"",appId:""},
+  adminUrl:"" // Dirección de tu Dolibarr (ej. http://localhost:8080). Déjalo vacío en la tienda pública.
+};
+/* ====== CATÁLOGO ====== */
+const IMG="https://pub-a7b9ab680adc480e87536eebdcade23d.r2.dev/media/ace2967a-9706-4913-bc74-5cb3d87256e4/image-";
+const T={n:"Tostión",o:["Espresso (claro)","Francés (oscuro bajo)"]};
+const G={n:"Condición",o:["Granos","Molido"]};
+const GR={n:"Condición",o:["Granos"]};
+const MO={n:"Condición",o:["Molido"]};
+const col=o=>({n:"Color",o});
+const P=[];
+const add=(c,n,p,i,d,v=[],u="")=>P.push({id:P.length,c,n,p,i,d,v,u});
+const orig=(z,msnm,va)=>`Café de origen de ${z}, variedad ${va}, proceso lavado, a ${msnm} msnm.`;
+const C="Café";
+add(C,"500 g Origen Mérida · Santa Cruz de Mora",12,"2Cv06TJIMhfd",orig("Santa Cruz de Mora","1.800","catuaí amarillo"),[T,G]);
+add(C,"500 g Origen Mérida · Mocoties",12,"hKtVAEg3zbNA",orig("Mocoties","1.800","villanueva"),[T,G]);
+add(C,"500 g Origen Trujillo · Boconó",12,"3Q-2k77gWkrD",orig("Boconó","1.600","monteclaro"),[T,G]);
+add(C,"500 g Origen Lara · Humocaro",12,"FGCiCIoHuS1N",orig("Humocaro","1.400","caturra"),[T,G]);
+add(C,"500 g Origen Barinas · Caldera",12,"shI8VNJgJ85T","Café de Caldera, al pie de la cordillera andina. Variedad Cenicafé, proceso lavado, grano tipo A de exportación.");
+add(C,"1 kg Origen Mérida · Santa Cruz de Mora",24,"TxLPmg5uxXXz",orig("Santa Cruz de Mora","1.800","catuaí amarillo"),[T,GR]);
+add(C,"1 kg Origen Trujillo · Boconó",24,"hNA8FMhdiHJi",orig("Boconó","1.600","monteclaro"),[T,GR]);
+add(C,"200 g Café de especialidad venezolano",25,"CPulK2BPspJQ","Café de especialidad cultivado en altura, con perfiles aromáticos únicos. Grano seleccionado.");
+add(C,"250 g Blend Sanare",4.2,"dB4wlZKRnGJ3","Blend de variedades venezolanas de Lara, calidad tipo B, tostión francés. Ideal para el hogar y el supermercado.",[MO]);
+add(C,"500 g Blend Sanare",10,"n1o5VPx6dmhU","Blend de variedades venezolanas de Lara, calidad tipo B, tostión oscuro claro.",[MO]);
+add(C,"1 kg Blend Sanare",18,"xwk8uo3o_w8O","Blend de variedades venezolanas de Lara, calidad tipo B, tostión francés. Ideal para panadería y el hogar.",[GR]);
+const D="Despensa";
+add(D,"Miel de abejas 270 g",7,"So5xRNiIAHW9","Miel 100% pura de flores de mastranto, de Pariaguán (Anzoátegui). Envase con dispensador.");
+add(D,"Miel de abejas 750 g",16,"bZ6yLAB9GoTm","Miel 100% pura de flores de mastranto, de Pariaguán (Anzoátegui). Envase con dispensador.");
+add(D,"Galón de miel de abejas",65,"pc4aEnDNSFv_","Miel 100% pura de flores de mastranto, de Pariaguán (Anzoátegui). Galón de grado alimenticio.");
+add(D,"Mermelada artesanal venezolana",6,"7QuF8iRghkEz","Frutas nacionales, 70% fruta, sin azúcar, sin gluten, alta en fibra.",[{n:"Sabor",o:["Ají dulce","Fresa","Durazno","Guayaba"]}]);
+add(D,"Ponche navideño 750 ml",16,"vzZwOMXkfRrM","Ponche artesanal para encuentros familiares.",[{n:"Sabor",o:["Vainilla","Coco","Moka","Almendras","Café"]}]);
+add(D,"Extracto de jengibre 400 ml",10,"xFZvBHCbuEYQ","Extracto puro hecho bajo pedido. Para tés, bebidas frías y cocina. Dura 15 días.");
+const E="Equipos y filtros";
+add(E,"Filtros V60 blancos (100 u.)",12,"QfPR1VIU9B1E","Filtros de papel blanco de grado alimenticio para V60.");
+add(E,"Filtros Chemex blancos (100 u.)",15,"i1xronmNCLKp","Filtros de papel blanco de grado alimenticio para Chemex.");
+add(E,"Molino manual de acero inoxidable",50,"Ju_KmCzO0K7h","Muelas profesionales que dan molienda fina y pareja sin calentar el grano.");
+add(E,"Cafiza para máquina de espresso (268 g)",15,"ccq18AIi9pO4","Polvo limpiador que elimina residuos y aceites de café de tu máquina.");
+const B="Empaques";
+const emp=(g,p,i,c)=>add(B,`Paquete de 100 empaques de ${g}`,p,i,`Base cuadrada con válvula y zipper, con barrera de protección. Para café y derivados.`,[col(c)]);
+emp("125 g",45,"HAFk6PcJ35NZ",["Negro"]);
+emp("250 g",55,"gNa8PzmyVTWG",["Negro","Blanco"]);
+emp("340 g",65,"62mvmxUlhFIA",["Negro","Kraft"]);
+emp("500 g",70,"sqyeFsFmCIq2",["Negro","Blanco"]);
+emp("1 kg",85,"csWHAjFuyQp_",["Negro","Blanco"]);
+emp("2,5 kg",160,"4Zj6zH1sCGOU",["Negro"]);
+const S="Cursos y servicios";
+add(S,"Curso de barismo básico",60,"1yF7SI5VisCs","Teórico-práctico: de la extracción al arte latte, para baristas principiantes.");
+add(S,"Curso de tostado de café",120,"uAJFYrpvOImd","Pruebas de calidad del grano verde, funcionamiento de la tostadora, fases, seguridad y detección de defectos.");
+add(S,"Curso de brewing o colado",30,"8wMAOHZDWCRO","Chemex, V60 y sifón japonés: tueste, molienda y ratios agua-café.");
+add(S,"Curso de finanzas para café",50,"csRfF262XPLa","Inversión, costos, contabilidad, trámites legales y control de gestión.");
+add(S,"Servicio de tostión de café verde",1.5,"xMW5dLQBwZuQ","Solo tueste de café verde tipo A o B. Por lote de 6 kg (US$ 9). Precio por kg.",[],"kg");
+add(S,"Servicio de selección de café",1,"QXDNlQDqjpLN","Retiramos defectos del café tostado. Precio por kg procesado.",[],"kg");
+add(S,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
+add(S,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
+
+const NOTAS={"Cursos y servicios":"Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp.","Empaques":"Venta al mayor para tostadores y cafeterías."};
+const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
+const $=s=>document.querySelector(s);
+const cats=["Todo",...new Set(P.map(p=>p.c))];
+let cat="Todo",q="",cart=[];
+try{cart=JSON.parse(localStorage.getItem("amadahy-cart")||"[]")}catch(e){}
+const save=()=>{try{localStorage.setItem("amadahy-cart",JSON.stringify(cart))}catch(e){}};
+
+function tabs(){
+  $("#tabs").innerHTML=cats.map(c=>`<button aria-pressed="${c===cat}" data-c="${c}">${c}</button>`).join("")+`<input id="q" type="search" placeholder="Buscar producto" value="${q}" aria-label="Buscar producto">`;
+  const n=$("#note");n.hidden=!NOTAS[cat];n.textContent=NOTAS[cat]||"";
+}
+function grid(){
+  const l=P.filter(p=>(cat==="Todo"||p.c===cat)&&p.n.toLowerCase().includes(q.toLowerCase()));
+  $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${IMG+p.i}.webp" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" /"+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
+}
+function drawCart(){
+  $("#cnt").textContent=cart.length;
+  $("#items").innerHTML=cart.length?cart.map((c,i)=>`<div class="row"><b>${c.n}</b><span>${money(c.p*c.q)}</span><small>${c.v||""}</small><span><input type="number" min="${c.u?0.5:1}" step="${c.u?0.5:1}" value="${c.q}" data-i="${i}" aria-label="Cantidad">${c.u?" "+c.u:""}</span><button data-x="${i}">Quitar</button></div>`).join(""):`<p class="empty">Tu carrito está vacío.</p>`;
+  $("#total").textContent=money(cart.reduce((s,c)=>s+c.p*c.q,0));
+  $("#f").hidden=!cart.length;
+  save();
+}
+const open=v=>{$("#cart").classList.toggle("open",v);$("#shade").classList.toggle("open",v)};
+
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b){cat=b.dataset.c;tabs();grid()}});
+$("#tabs").addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;grid()}});
+document.querySelector(".alt").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;cat="Café";q=b.dataset.q;tabs();grid();$("#catalogo").scrollIntoView()});
+$("#grid").addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;
+  const p=P[+b.dataset.a],card=b.closest(".card");
+  const v=[...card.querySelectorAll("select")].map(s=>s.value).join(" · ");
+  const k=p.id+"|"+v,ex=cart.find(c=>c.k===k);
+  if(ex)ex.q+=1;else cart.push({k,n:p.n,v,p:p.p,q:1,u:p.u});
+  $("#done").hidden=true;drawCart();open(true);
+});
+$("#items").addEventListener("input",e=>{const i=e.target.dataset.i;if(i!==undefined){const n=parseFloat(e.target.value);if(n>0){cart[i].q=n;$("#total").textContent=money(cart.reduce((s,c)=>s+c.p*c.q,0));save()}}});
+$("#items").addEventListener("click",e=>{const x=e.target.dataset.x;if(x!==undefined){cart.splice(+x,1);drawCart()}});
+$("#openCart").onclick=()=>open(true);$("#closeCart").onclick=()=>open(false);$("#shade").onclick=()=>open(false);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")open(false)});
+
+async function guardar(o){
+  const f=CFG.firebase;if(!f.apiKey)return false;
+  try{
+    const load=s=>new Promise((ok,no)=>{const t=document.createElement("script");t.src=s;t.onload=ok;t.onerror=no;document.head.appendChild(t)});
+    await load("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+    await load("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js");
+    if(!firebase.apps.length)firebase.initializeApp(f);
+    await firebase.firestore().collection("pedidos").doc(o.numero).set({...o,creado:firebase.firestore.FieldValue.serverTimestamp()});
+    return true;
+  }catch(err){console.error("No se pudo guardar en Firebase",err);return false}
+}
+$("#f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const d=Object.fromEntries(new FormData(e.target));
+  const total=cart.reduce((s,c)=>s+c.p*c.q,0);
+  const o={numero:"AM-"+Date.now().toString(36).toUpperCase(),estado:"pendiente",cliente:{nombre:d.nombre,telefono:d.tel,direccion:d.dir},pago:d.pago,total,
+    items:cart.map(c=>({producto:c.n,opcion:c.v,cantidad:c.q,unidad:c.u||"u",precio:c.p}))};
+  await guardar(o);
+  const txt=`Pedido ${o.numero}\n`+cart.map(c=>`• ${c.q}${c.u?" "+c.u:" x"} ${c.n}${c.v?" ("+c.v+")":""} – ${money(c.p*c.q)}`).join("\n")+`\n\nTotal: ${money(total)}\nPago: ${d.pago}\nNombre: ${d.nombre}\nTeléfono: ${d.tel}\nEntrega: ${d.dir}`;
+  window.open(`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(txt)}`,"_blank");
+  cart=[];drawCart();e.target.reset();
+  const m=$("#done");m.hidden=false;m.textContent=`Pedido ${o.numero} listo. Si WhatsApp no se abrió, escríbenos al +${CFG.whatsapp} con ese número.`;
+});
+if(CFG.adminUrl)$("#adminLink").innerHTML=` · <a href="${CFG.adminUrl}">Administración</a>`;
+tabs();grid();drawCart();
+</script>
+</body>
+</html>
