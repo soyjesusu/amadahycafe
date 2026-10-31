@@ -22,10 +22,14 @@ header{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--niebla
 header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
 .brand{font-family:"Young Serif",serif;font-size:22px}
 .cartbtn{background:var(--cereza);color:#fff;border:0;border-radius:99px;padding:8px 16px;font-weight:700}
-.hero{background:var(--bosque);color:var(--niebla);padding:48px 0 40px}
-.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-.hero h1{font-size:clamp(34px,5vw,56px);margin-bottom:14px}
-.hero p{max-width:44ch;margin:0 0 20px;opacity:.92}
+.hero{position:relative;display:flex;align-items:center;min-height:min(76vh,600px);padding:56px 0;color:#fff;background:var(--ink) url(hero_amadahy.jpg) 35% center/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,43,36,.94) 0%,rgba(28,43,36,.78) 40%,rgba(28,43,36,.08) 75%)}
+.hero .wrap{position:relative;width:100%}
+.hero .txt{max-width:540px}
+.hero h1{font-size:clamp(34px,5vw,58px);margin-bottom:14px}
+.hero p{margin:0 0 22px;opacity:.95}
+.origenes{background:var(--bosque);color:var(--niebla);padding:28px 0}
+.origenes .alt{max-width:640px}
 .cta{display:inline-block;background:var(--oro);color:var(--ink);border:0;border-radius:99px;padding:12px 22px;font-weight:700;text-decoration:none}
 .alt{display:grid;gap:8px}
 .alt h2{font-size:18px;margin-bottom:4px}
@@ -68,8 +72,10 @@ form input,form select,form textarea{width:100%;border:1px solid var(--linea);bo
 .shade.open{display:block}
 footer{background:var(--ink);color:var(--niebla);padding:28px 0;font-size:14px}
 footer a{color:var(--oro)}
+footer .erp{display:inline-block;margin-top:12px;border:1px solid var(--oro);border-radius:99px;padding:6px 14px;text-decoration:none;font-weight:700}
+footer .erp:hover{background:var(--oro);color:var(--ink)}
 .empty{padding:30px 0;opacity:.7}
-@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.alt button{grid-template-columns:110px 1fr}.tabs input{margin-left:0;width:100%}}
+@media(max-width:760px){.hero{min-height:0;padding:44px 0}.hero::before{background:rgba(28,43,36,.74)}.alt button{grid-template-columns:110px 1fr}.tabs input{margin-left:0;width:100%}}
 @media(prefers-reduced-motion:reduce){aside{transition:none}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -77,11 +83,14 @@ footer a{color:var(--oro)}
 <header><div class="wrap"><span class="brand">Amadahy Café</span><button class="cartbtn" id="openCart">Carrito (<span id="cnt">0</span>)</button></div></header>
 
 <section class="hero"><div class="wrap">
-  <div>
+  <div class="txt">
     <h1>Café de origen venezolano, tostado en Caracas</h1>
     <p>Somos una tostaduría en Caracas. Procesamos café de origen de distintas zonas productoras de Venezuela: Mérida, Trujillo, Lara y Barinas. También vendemos empaques para tostadores, miel, mermeladas y cursos de barismo.</p>
     <a class="cta" href="#catalogo">Ver el catálogo</a>
   </div>
+</div></section>
+
+<section class="origenes"><div class="wrap">
   <div class="alt" aria-label="Orígenes por altitud">
     <h2>Orígenes de nuestros cafés, por altitud</h2>
     <button data-q="Santa Cruz"><span>Santa Cruz de Mora</span><span class="bar"><i style="width:100%">1.800 msnm</i></span></button>
@@ -246,7 +255,7 @@ $("#f").addEventListener("submit",async e=>{
   cart=[];drawCart();e.target.reset();
   const m=$("#done");m.hidden=false;m.textContent=`Pedido ${o.numero} listo. Si WhatsApp no se abrió, escríbenos al +${CFG.whatsapp} con ese número.`;
 });
-if(CFG.adminUrl)$("#adminLink").innerHTML=` · <a href="${CFG.adminUrl}">Administración</a>`;
+if(CFG.adminUrl)$("#adminLink").innerHTML=`<br><a class="erp" href="${CFG.adminUrl}" target="_blank" rel="noopener">ERP de Amadahy</a>`;
 tabs();grid();drawCart();
 </script>
 </body>
