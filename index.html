@@ -143,12 +143,21 @@ footer .erp:hover{background:var(--oro);color:var(--ink)}
 /* ====== CONFIGURACIÓN ====== */
 const CFG={
   whatsapp:"584242625441",
-  vendedor:"JUFL26", // Etiqueta del vendedor: aparece en el carrito, en el mensaje de WhatsApp y en el pedido guardado. Déjala vacía para ocultarla.
+  // Vendedores: código -> nombre. Cada vendedor comparte el enlace de la tienda con ?v=CODIGO al final.
+  vendedores:{JUFL26:"Jesús Fernández López"},
+  vendedorPorDefecto:"", // vacío: el enlace original de la tienda NO muestra vendedor. Solo se muestra si el enlace trae ?v=CODIGO
   // Pega aquí tu configuración de Firebase (Consola > Configuración del proyecto > Tus apps > Web).
   // Si apiKey queda vacío, los pedidos solo se envían por WhatsApp.
   firebase:{apiKey:"",authDomain:"",projectId:"",appId:""},
   adminUrl:"" // Dirección de tu Dolibarr (ej. http://localhost:8080). Déjalo vacío en la tienda pública.
 };
+let VEND=CFG.vendedorPorDefecto||"";
+try{
+  const v=(new URLSearchParams(location.search).get("v")||"").trim().toUpperCase();
+  if(v&&CFG.vendedores[v])localStorage.setItem("amadahy-v",v);
+  const g=localStorage.getItem("amadahy-v");
+  if(g&&CFG.vendedores[g])VEND=g;
+}catch(e){}
 /* ====== CATÁLOGO ====== */
 const IMG="https://pub-a7b9ab680adc480e87536eebdcade23d.r2.dev/media/ace2967a-9706-4913-bc74-5cb3d87256e4/image-";
 const T={n:"Tostión",o:["Espresso (claro)","Francés (oscuro bajo)"]};
@@ -157,9 +166,16 @@ const GR={n:"Condición",o:["Granos"]};
 const MO={n:"Condición",o:["Molido"]};
 const col=o=>({n:"Color",o});
 const P=[];
-const kgOf=(c,n)=>{if(c!=="Café")return 0;const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;const x=parseFloat(m[1].replace(",","."));return m[2].toLowerCase()==="kg"?x:x/1000};
-const add=(c,n,p,i,d,v=[],u="")=>P.push({id:P.length,c,n,p,i,d,v,u,kg:kgOf(c,n),g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,"")});
-const MAYOR_KG=5,DESC=0.10;
+const MAYOR_KG=5,UTENS_MIN=10,EMP_MIN=500,CURSO_MIN=2,DESC=0.10; // mínimos y porcentaje de descuento
+const kgOf=n=>{const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;const x=parseFloat(m[1].replace(",","."));return m[2].toLowerCase()==="kg"?x:x/1000};
+const regla=(c,n)=>{
+  if(c==="Café"){const k=kgOf(n);return k?{g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,""),per:k,min:MAYOR_KG,t:"kg"}:null}
+  if(c==="Equipos y filtros")return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
+  if(c==="Empaques")return{g:n.replace(/^Paquete de 100 /,""),per:100,min:EMP_MIN,t:"unidades"};
+  if(c==="Cursos y servicios"&&/^Curso/.test(n))return{g:n,per:1,min:CURSO_MIN,t:"participante(s)"};
+  return null;
+};
+const add=(c,n,p,i,d,v=[],u="")=>P.push({id:P.length,c,n,p,i,d,v,u,r:regla(c,n)});
 const orig=(z,msnm,va)=>`Café de origen de ${z}, variedad ${va}, proceso lavado, a ${msnm} msnm.`;
 const C="Café";
 add(C,"500 g Origen Mérida · Santa Cruz de Mora",12,"2Cv06TJIMhfd",orig("Santa Cruz de Mora","1.800","catuaí amarillo"),[T,G]);
@@ -203,7 +219,8 @@ add(S,"Servicio de selección de café",1,"QXDNlQDqjpLN","Retiramos defectos del
 add(S,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
 add(S,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
 
-const NOTAS={"Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos y servicios":"Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp.","Empaques":"Venta al mayor para tostadores y cafeterías."};
+const NOTAS={"Equipos y filtros":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
+  "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos y servicios":`Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} empaques o más del mismo tamaño (${EMP_MIN/100} paquetes) recibes ${DESC*100} % de descuento.`};
 const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const $=s=>document.querySelector(s);
 const cats=["Todo",...new Set(P.map(p=>p.c))];
@@ -219,29 +236,29 @@ function grid(){
   const l=P.filter(p=>(cat==="Todo"||p.c===cat)&&p.n.toLowerCase().includes(q.toLowerCase()));
   $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${IMG+p.i}.webp" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" /"+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
 }
-const gOf=c=>P[parseInt(c.k)]?.g||"";
-const kgL=c=>(P[parseInt(c.k)]?.kg||0)*c.q;
+const prod=c=>P[parseInt(c.k)];
 const kgf=n=>n.toLocaleString("es-VE",{maximumFractionDigits:2});
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
 function calc(){
   const G={};
-  cart.forEach(c=>{const k=kgL(c);if(k>0){const g=gOf(c);G[g]=(G[g]||0)+k}});
-  const ok=g=>(G[g]||0)>=MAYOR_KG;
+  cart.forEach(c=>{const p=prod(c);if(!p||!p.r)return;const o=G[p.r.g]||(G[p.r.g]={u:0,min:p.r.min,t:p.r.t});o.u+=p.r.per*c.q});
+  const ok=g=>!!G[g]&&G[g].u>=G[g].min;
   const sub=cart.reduce((t,c)=>t+c.p*c.q,0);
-  const dsc=cart.reduce((t,c)=>t+(kgL(c)>0&&ok(gOf(c))?c.p*c.q*DESC:0),0);
-  return{G,ok,sub,dsc,total:sub-dsc};
+  const dsc=cart.reduce((t,c)=>{const p=prod(c);return t+(p&&p.r&&ok(p.r.g)?c.p*c.q*DESC:0)},0);
+  return{G,ok,sub,dsc,total:sub-dsc,oks:()=>Object.keys(G).filter(ok)};
 }
-const linea=c=>{const R=calc();return kgL(c)>0&&R.ok(gOf(c))?`<s>${money(c.p*c.q)}</s>${money(c.p*c.q*(1-DESC))}`:money(c.p*c.q)};
+const linea=c=>{const R=calc(),p=prod(c);return p&&p.r&&R.ok(p.r.g)?`<s>${money(c.p*c.q)}</s>${money(c.p*c.q*(1-DESC))}`:money(c.p*c.q)};
 function totales(){
   const R=calc();
   $("#total").textContent=money(R.total);
   document.querySelectorAll(".pr").forEach((el,i)=>{if(cart[i])el.innerHTML=linea(cart[i])});
   let h="";
   for(const g of Object.keys(R.G)){
-    const k=R.G[g];
-    h+=R.ok(g)?`<div class="mayor">Precio al mayor aplicado en ${g}: ${DESC*100} % de descuento (${kgf(k)} kg).</div>`
-      :`<div class="mayor falta">Llevas ${kgf(k)} kg de ${g}. Con ${MAYOR_KG} kg o más de este mismo café recibes ${DESC*100} % de descuento (te faltan ${kgf(MAYOR_KG-k)} kg).</div>`;
+    const o=R.G[g];
+    h+=R.ok(g)?`<div class="mayor"><b>${cap(g)}:</b> descuento de ${DESC*100} % aplicado (${kgf(o.u)} ${o.t}).</div>`
+      :`<div class="mayor falta"><b>${cap(g)}:</b> llevas ${kgf(o.u)} ${o.t}. Con ${o.min} ${o.t} o más recibes ${DESC*100} % de descuento (te faltan ${kgf(o.min-o.u)}).</div>`;
   }
-  if(R.dsc>0)h+=`<div class="sub"><span>Subtotal</span><span>${money(R.sub)}</span></div><div class="sub"><span>Descuento al mayor</span><span>-${money(R.dsc)}</span></div>`;
+  if(R.dsc>0)h+=`<div class="sub"><span>Subtotal</span><span>${money(R.sub)}</span></div><div class="sub"><span>Descuento por volumen</span><span>-${money(R.dsc)}</span></div>`;
   $("#resumen").innerHTML=cart.length?h:"";
 }
 function drawCart(){
@@ -284,16 +301,16 @@ $("#f").addEventListener("submit",async e=>{
   e.preventDefault();
   const d=Object.fromEntries(new FormData(e.target));
   const R=calc(),total=R.total;
-  const o={numero:"AM-"+Date.now().toString(36).toUpperCase(),estado:"pendiente",vendedor:CFG.vendedor||"",subtotal:R.sub,descuento:R.dsc,mayor:Object.keys(R.G).filter(g=>R.ok(g)),cliente:{nombre:d.nombre,telefono:d.tel,direccion:d.dir},pago:d.pago,total,
+  const o={numero:"AM-"+Date.now().toString(36).toUpperCase(),estado:"pendiente",vendedor:VEND||"",subtotal:R.sub,descuento:R.dsc,descuentoEn:R.oks(),cliente:{nombre:d.nombre,telefono:d.tel,direccion:d.dir},pago:d.pago,total,
     items:cart.map(c=>({producto:c.n,opcion:c.v,cantidad:c.q,unidad:c.u||"u",precio:c.p}))};
   await guardar(o);
-  const txt=`Pedido ${o.numero}${CFG.vendedor?" · Vendedor: "+CFG.vendedor:""}\n`+cart.map(c=>`• ${c.q}${c.u?" "+c.u:" x"} ${c.n}${c.v?" ("+c.v+")":""} – ${money(c.p*c.q)}`).join("\n")+"\n\n"+(R.dsc?`Subtotal: ${money(R.sub)}\nDescuento al mayor (${DESC*100}%: ${Object.keys(R.G).filter(g=>R.ok(g)).join(", ")}): -${money(R.dsc)}\n`:"")+`Total: ${money(total)}\nPago: ${d.pago}\nNombre: ${d.nombre}\nTeléfono: ${d.tel}\nEntrega: ${d.dir}`;
+  const txt=`Pedido ${o.numero}${VEND?" · Vendedor: "+VEND:""}\n`+cart.map(c=>`• ${c.q}${c.u?" "+c.u:" x"} ${c.n}${c.v?" ("+c.v+")":""} – ${money(c.p*c.q)}`).join("\n")+"\n\n"+(R.dsc?`Subtotal: ${money(R.sub)}\nDescuento por volumen (${DESC*100}%: ${R.oks().join(", ")}): -${money(R.dsc)}\n`:"")+`Total: ${money(total)}\nPago: ${d.pago}\nNombre: ${d.nombre}\nTeléfono: ${d.tel}\nEntrega: ${d.dir}`;
   window.open(`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(txt)}`,"_blank");
   cart=[];drawCart();e.target.reset();
   const m=$("#done");m.hidden=false;m.textContent=`Pedido ${o.numero} listo. Si WhatsApp no se abrió, escríbenos al +${CFG.whatsapp} con ese número.`;
 });
 if(CFG.adminUrl)$("#adminLink").innerHTML=`<br><a class="erp" href="${CFG.adminUrl}" target="_blank" rel="noopener">ERP de Amadahy</a>`;
-if(CFG.vendedor){$("#vendTag").textContent=CFG.vendedor;$("#vend").hidden=false}
+if(VEND){$("#vendTag").textContent=VEND;$("#vend").hidden=false}
 tabs();grid();drawCart();
 </script>
 </body>
