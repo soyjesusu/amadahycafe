@@ -155,7 +155,7 @@ const col=o=>({n:"Color",o});
 const P=[];
 const kgOf=(c,n)=>{if(c!=="Café")return 0;const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;const x=parseFloat(m[1].replace(",","."));return m[2].toLowerCase()==="kg"?x:x/1000};
 const add=(c,n,p,i,d,v=[],u="")=>P.push({id:P.length,c,n,p,i,d,v,u,kg:kgOf(c,n),g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,"")});
-const MAYOR_KG=5,DESC=0.20;
+const MAYOR_KG=5,DESC=0.10;
 const orig=(z,msnm,va)=>`Café de origen de ${z}, variedad ${va}, proceso lavado, a ${msnm} msnm.`;
 const C="Café";
 add(C,"500 g Origen Mérida · Santa Cruz de Mora",12,"2Cv06TJIMhfd",orig("Santa Cruz de Mora","1.800","catuaí amarillo"),[T,G]);
@@ -199,7 +199,7 @@ add(S,"Servicio de selección de café",1,"QXDNlQDqjpLN","Retiramos defectos del
 add(S,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
 add(S,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
 
-const NOTAS={"Café":"Precio al mayor: compra 5 kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe 20 % de descuento en ese café.","Cursos y servicios":"Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp.","Empaques":"Venta al mayor para tostadores y cafeterías."};
+const NOTAS={"Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos y servicios":"Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp.","Empaques":"Venta al mayor para tostadores y cafeterías."};
 const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const $=s=>document.querySelector(s);
 const cats=["Todo",...new Set(P.map(p=>p.c))];
@@ -234,8 +234,8 @@ function totales(){
   let h="";
   for(const g of Object.keys(R.G)){
     const k=R.G[g];
-    h+=R.ok(g)?`<div class="mayor">Precio al mayor aplicado en ${g}: 20 % de descuento (${kgf(k)} kg).</div>`
-      :`<div class="mayor falta">Llevas ${kgf(k)} kg de ${g}. Con ${MAYOR_KG} kg o más de este mismo café recibes 20 % de descuento (te faltan ${kgf(MAYOR_KG-k)} kg).</div>`;
+    h+=R.ok(g)?`<div class="mayor">Precio al mayor aplicado en ${g}: ${DESC*100} % de descuento (${kgf(k)} kg).</div>`
+      :`<div class="mayor falta">Llevas ${kgf(k)} kg de ${g}. Con ${MAYOR_KG} kg o más de este mismo café recibes ${DESC*100} % de descuento (te faltan ${kgf(MAYOR_KG-k)} kg).</div>`;
   }
   if(R.dsc>0)h+=`<div class="sub"><span>Subtotal</span><span>${money(R.sub)}</span></div><div class="sub"><span>Descuento al mayor</span><span>-${money(R.dsc)}</span></div>`;
   $("#resumen").innerHTML=cart.length?h:"";
@@ -283,7 +283,7 @@ $("#f").addEventListener("submit",async e=>{
   const o={numero:"AM-"+Date.now().toString(36).toUpperCase(),estado:"pendiente",subtotal:R.sub,descuento:R.dsc,mayor:Object.keys(R.G).filter(g=>R.ok(g)),cliente:{nombre:d.nombre,telefono:d.tel,direccion:d.dir},pago:d.pago,total,
     items:cart.map(c=>({producto:c.n,opcion:c.v,cantidad:c.q,unidad:c.u||"u",precio:c.p}))};
   await guardar(o);
-  const txt=`Pedido ${o.numero}\n`+cart.map(c=>`• ${c.q}${c.u?" "+c.u:" x"} ${c.n}${c.v?" ("+c.v+")":""} – ${money(c.p*c.q)}`).join("\n")+"\n\n"+(R.dsc?`Subtotal: ${money(R.sub)}\nDescuento al mayor (20%: ${Object.keys(R.G).filter(g=>R.ok(g)).join(", ")}): -${money(R.dsc)}\n`:"")+`Total: ${money(total)}\nPago: ${d.pago}\nNombre: ${d.nombre}\nTeléfono: ${d.tel}\nEntrega: ${d.dir}`;
+  const txt=`Pedido ${o.numero}\n`+cart.map(c=>`• ${c.q}${c.u?" "+c.u:" x"} ${c.n}${c.v?" ("+c.v+")":""} – ${money(c.p*c.q)}`).join("\n")+"\n\n"+(R.dsc?`Subtotal: ${money(R.sub)}\nDescuento al mayor (${DESC*100}%: ${Object.keys(R.G).filter(g=>R.ok(g)).join(", ")}): -${money(R.dsc)}\n`:"")+`Total: ${money(total)}\nPago: ${d.pago}\nNombre: ${d.nombre}\nTeléfono: ${d.tel}\nEntrega: ${d.dir}`;
   window.open(`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(txt)}`,"_blank");
   cart=[];drawCart();e.target.reset();
   const m=$("#done");m.hidden=false;m.textContent=`Pedido ${o.numero} listo. Si WhatsApp no se abrió, escríbenos al +${CFG.whatsapp} con ese número.`;
