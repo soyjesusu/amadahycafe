@@ -152,11 +152,9 @@ const CFG={
   adminUrl:"" // Dirección de tu Dolibarr (ej. http://localhost:8080). Déjalo vacío en la tienda pública.
 };
 let VEND=CFG.vendedorPorDefecto||"";
-try{
+try{ // La etiqueta solo se toma del enlace actual (?v=CODIGO). El enlace raíz nunca muestra vendedor.
   const v=(new URLSearchParams(location.search).get("v")||"").trim().toUpperCase();
-  if(v&&CFG.vendedores[v])localStorage.setItem("amadahy-v",v);
-  const g=localStorage.getItem("amadahy-v");
-  if(g&&CFG.vendedores[g])VEND=g;
+  if(v&&CFG.vendedores[v])VEND=v;
 }catch(e){}
 /* ====== CATÁLOGO ====== */
 const IMG="https://pub-a7b9ab680adc480e87536eebdcade23d.r2.dev/media/ace2967a-9706-4913-bc74-5cb3d87256e4/image-";
