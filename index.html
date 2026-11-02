@@ -223,7 +223,7 @@ add(D,"Miel de abejas 270 g",7,"So5xRNiIAHW9","Miel 100% pura de flores de mastr
 add(D,"Miel de abejas 750 g",16,"bZ6yLAB9GoTm","Miel 100% pura de flores de mastranto, de Pariaguán (Anzoátegui). Envase con dispensador.");
 add(D,"Galón de miel de abejas",65,"pc4aEnDNSFv_","Miel 100% pura de flores de mastranto, de Pariaguán (Anzoátegui). Galón de grado alimenticio.");
 add(D,"Mermelada artesanal venezolana",6,"7QuF8iRghkEz","Frutas nacionales, 70% fruta, sin azúcar, sin gluten, alta en fibra.",[{n:"Sabor",o:["Ají dulce","Fresa","Durazno","Guayaba"]}]);
-add(D,"Ponche navideño 750 ml",16,"vzZwOMXkfRrM","Ponche artesanal para encuentros familiares.",[{n:"Sabor",o:["Vainilla","Coco","Moka","Almendras","Café"]}]);
+add(D,"Ponche crema 750 g",18,"vzZwOMXkfRrM","Ponche artesanal para encuentros familiares.",[{n:"Sabor",o:["Vainilla","Coco","Moka","Almendras","Café"]}]);
 add(D,"Extracto de jengibre 400 ml",10,"xFZvBHCbuEYQ","Extracto puro hecho bajo pedido. Para tés, bebidas frías y cocina. Dura 15 días.");
 const E="Equipos y filtros";
 add(E,"Filtros V60 blancos (100 u.)",12,"QfPR1VIU9B1E","Filtros de papel blanco de grado alimenticio para V60.");
@@ -248,7 +248,7 @@ add(S,"Servicio de selección de café",1,"QXDNlQDqjpLN","Retiramos defectos del
 add(S,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
 add(S,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
 
-const NOTAS={"Despensa":`Ponche navideño: compra ${PONCHE_MIN} unidades o más (de cualquier sabor) y recibe ${pct(PONCHE_DESC)} % de descuento.`,"Equipos y filtros":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
+const NOTAS={"Despensa":`Ponche crema: lleva ${PONCHE_MIN} unidades o más (de cualquier sabor) y recibe ${pct(PONCHE_DESC)} % de descuento: cada uno queda en $16.`,"Equipos y filtros":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
   "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos y servicios":`Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} empaques o más del mismo tamaño (${EMP_MIN/100} paquetes) recibes ${DESC*100} % de descuento.`};
 const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const $=s=>document.querySelector(s);
