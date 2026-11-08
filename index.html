@@ -180,7 +180,7 @@ const kgOf=n=>{const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;con
 const regla=(c,n)=>{
   if(c==="Café"){const k=kgOf(n);return k?{g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,""),per:k,min:MAYOR_KG,t:"kg"}:null}
   if(c==="Despensa"&&/^Ponche/.test(n))return{g:n,per:1,min:PONCHE_MIN,t:"unidades",d:PONCHE_DESC};
-  if(c==="Equipos y filtros")return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
+  if(c==="Equipos y filtros"&&!/Taza de peltre/.test(n))return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
   if(c==="Empaques")return{g:n.replace(/^Paquete de 100 /,""),per:100,min:EMP_MIN,t:"unidades"};
   if(c==="Cursos y servicios"&&/^Curso/.test(n))return{g:n,per:1,min:CURSO_MIN,t:"participante(s)"};
   return null;
@@ -211,7 +211,7 @@ add(E,"Filtros V60 blancos (100 u.)",12,"QfPR1VIU9B1E","Filtros de papel blanco 
 add(E,"Filtros Chemex blancos (100 u.)",15,"i1xronmNCLKp","Filtros de papel blanco de grado alimenticio para Chemex.");
 add(E,"Molino manual de acero inoxidable",50,"Ju_KmCzO0K7h","Muelas profesionales que dan molienda fina y pareja sin calentar el grano.");
 add(E,"Cafiza para máquina de espresso (268 g)",15,"ccq18AIi9pO4","Polvo limpiador que elimina residuos y aceites de café de tu máquina.");
-add(E,"Taza de peltre con diseños venezolanos",15,"tazasPeltreVzla","Taza de peltre (enamel) de café con diseños alusivos a Venezuela. Ideal para el hogar o regalo. Diseños variados.",[{n:"Diseño",o:["Venezuela (letras amarillas)","Caracas","Paisaje Zuela","Stickers / Viajero"]}]);
+add(E,"Taza de peltre con diseños venezolanos",15,"tazasPeltreVzla","Taza de peltre (enamel) de café con diseños alusivos a Venezuela. Ideal para el hogar o regalo. Diseños variados.",[{n:"Diseño",o:["Venezuela","Caracas","Paisaje Zuela","Stickers / Viajero"]}]);
 
 const B="Empaques";
 const emp=(g,p,i,c)=>add(B,`Paquete de 100 empaques de ${g}`,p,i,`Base cuadrada con válvula y zipper, con barrera de protección. Para café y derivados.`,[col(c)]);
