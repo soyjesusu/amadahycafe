@@ -31,6 +31,8 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .hero p{margin:0 0 22px;opacity:.95}
 .origenes{background:var(--bosque);color:var(--niebla);padding:28px 0}
 .origenes .alt{max-width:640px}
+.ctas{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.cta.cashea{background:transparent;color:#fff;border:2px solid var(--oro);padding:10px 22px;cursor:default;user-select:none}
 .cta{display:inline-block;background:var(--oro);color:var(--ink);border:0;border-radius:99px;padding:12px 22px;font-weight:700;text-decoration:none}
 .alt{display:grid;gap:8px}
 .alt h2{font-size:18px;margin-bottom:4px}
@@ -94,7 +96,7 @@ footer .erp:hover{background:var(--oro);color:var(--ink)}
   <div class="txt">
     <h1>Café de origen venezolano, tostado en Caracas</h1>
     <p>Somos una tostaduría en Caracas. Procesamos café de origen de distintas zonas productoras de Venezuela: Mérida, Trujillo, Lara y Barinas. También vendemos empaques para tostadores, miel, mermeladas y cursos de barismo.</p>
-    <a class="cta" href="#catalogo">Ver el catálogo</a>
+    <div class="ctas"><a class="cta" href="#catalogo">Ver el catálogo</a><span class="cta cashea">Contamos con Cashea</span></div>
   </div>
 </div></section>
 
@@ -181,9 +183,9 @@ const kgOf=n=>{const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;con
 const regla=(c,n)=>{
   if(c==="Café"){const k=kgOf(n);return k?{g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,""),per:k,min:MAYOR_KG,t:"kg"}:null}
   if(c==="Despensa"&&/^Ponche/.test(n))return{g:n,per:1,min:PONCHE_MIN,t:"unidades",d:PONCHE_DESC};
-  if(c==="Equipos y filtros"&&!/Taza de peltre/.test(n))return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
+  if(c==="Utensilios"&&!/Taza de peltre/.test(n))return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
   if(c==="Empaques")return{g:n.replace(/^Paquete de 100 /,""),per:100,min:EMP_MIN,t:"unidades"};
-  if(c==="Cursos y servicios"&&/^Curso/.test(n))return{g:n,per:1,min:CURSO_MIN,t:"participante(s)"};
+  if(c==="Cursos")return{g:n,per:1,min:CURSO_MIN,t:"participante(s)"};
   return null;
 };
 const add=(c,n,p,i,d,v=[],u="")=>P.push({id:P.length,c,n,p,i,d,v,u,r:regla(c,n)});
@@ -207,7 +209,7 @@ add(D,"Galón de miel de abejas",65,"4h1vZlcLybWj","Miel 100% pura de flores de 
 add(D,"Mermelada artesanal venezolana",6,"7QuF8iRghkEz","Frutas nacionales, 70% fruta, sin azúcar, sin gluten, alta en fibra.",[{n:"Sabor",o:["Ají dulce","Fresa","Durazno","Guayaba"]}]);
 add(D,"Ponche crema 750 g",18,"vzZwOMXkfRrM","Ponche artesanal para encuentros familiares.",[{n:"Sabor",o:["Vainilla","Coco","Moka","Almendras","Café"]}]);
 add(D,"Extracto de jengibre 400 ml",10,"xFZvBHCbuEYQ","Extracto puro hecho bajo pedido. Para tés, bebidas frías y cocina. Dura 15 días.");
-const E="Equipos y filtros";
+const E="Utensilios";
 add(E,"Filtros V60 blancos (100 u.)",12,"QfPR1VIU9B1E","Filtros de papel blanco de grado alimenticio para V60.");
 add(E,"Filtros Chemex blancos (100 u.)",15,"i1xronmNCLKp","Filtros de papel blanco de grado alimenticio para Chemex.");
 add(E,"Molino manual de acero inoxidable",50,"Ju_KmCzO0K7h","Muelas profesionales que dan molienda fina y pareja sin calentar el grano.");
@@ -221,19 +223,20 @@ emp("250 g",55,"gNa8PzmyVTWG",["Negro","Blanco"]);
 emp("340 g",65,"62mvmxUlhFIA",["Negro","Kraft"]);
 emp("500 g",70,"sqyeFsFmCIq2",["Negro","Blanco"]);
 emp("1 kg",80,"csWHAjFuyQp_",["Negro","Blanco"]);
-emp("2,5 kg",160,"4Zj6zH1sCGOU",["Negro"]);
-const S="Cursos y servicios";
+emp("2,5 kg",160,"csWHAjFuyQp_",["Negro"]);
+const S="Cursos";
+const SV="Servicios";
 add(S,"Curso de barismo básico",60,"1yF7SI5VisCs","Teórico-práctico: de la extracción al arte latte, para baristas principiantes.");
 add(S,"Curso de tostado de café",120,"uAJFYrpvOImd","Pruebas de calidad del grano verde, funcionamiento de la tostadora, fases, seguridad y detección de defectos.");
 add(S,"Curso de brewing o colado",30,"8wMAOHZDWCRO","Chemex, V60 y sifón japonés: tueste, molienda y ratios agua-café.");
 add(S,"Curso de finanzas para café",50,"csRfF262XPLa","Inversión, costos, contabilidad, trámites legales y control de gestión.");
-add(S,"Servicio de tostión de café verde",1.5,"xMW5dLQBwZuQ","Solo tueste de café verde tipo A o B. Por lote de 6 kg (US$ 9). Precio por kg.",[],"kg");
-add(S,"Servicio de selección de café",1,"QXDNlQDqjpLN","Retiramos defectos del café tostado. Precio por kg procesado.",[],"kg");
-add(S,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
-add(S,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
+add(SV,"Servicio de tostión de café verde",1.5,"xMW5dLQBwZuQ","Solo tueste de café verde tipo A o B. Por lote de 6 kg (US$ 9). Precio por kg.",[],"kg");
+add(SV,"Servicio de selección de café",1.5,"QXDNlQDqjpLN","Retiramos defectos del café tostado. Precio por kg procesado.",[],"kg");
+add(SV,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
+add(SV,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
 
-const NOTAS={"Despensa":`Ponche crema: lleva ${PONCHE_MIN} unidades o más (de cualquier sabor) y recibe ${pct(PONCHE_DESC)} % de descuento: cada uno queda en $16.`,"Equipos y filtros":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
-  "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos y servicios":`Los servicios se cobran por kilo: indica la cantidad en el carrito. Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} empaques o más del mismo tamaño (${EMP_MIN/100} paquetes) recibes ${DESC*100} % de descuento.`};
+const NOTAS={"Despensa":`Ponche crema: lleva ${PONCHE_MIN} unidades o más (de cualquier sabor) y recibe ${pct(PONCHE_DESC)} % de descuento: cada uno queda en $16.`,"Utensilios":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
+  "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos":`Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Servicios":`Todos los servicios cuestan $1,50 por kg: indica la cantidad de kg en el carrito.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} empaques o más del mismo tamaño (${EMP_MIN/100} paquetes) recibes ${DESC*100} % de descuento.`};
 const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const $=s=>document.querySelector(s);
 const cats=["Todo",...new Set(P.map(p=>p.c))];
@@ -247,7 +250,7 @@ function tabs(){
 }
 function grid(){
   const l=P.filter(p=>(cat==="Todo"||p.c===cat)&&p.n.toLowerCase().includes(q.toLowerCase()));
-  $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${MIEL_IMG[p.i]||(IMG+p.i+".webp")}" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" /"+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
+  $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${MIEL_IMG[p.i]||(IMG+p.i+".webp")}" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" por "+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
 }
 const prod=c=>P[parseInt(c.k)];
 const kgf=n=>n.toLocaleString("es-VE",{maximumFractionDigits:2});
