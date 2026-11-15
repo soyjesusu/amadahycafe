@@ -88,6 +88,7 @@ footer a{color:var(--oro)}
 footer .erp{display:inline-block;margin-top:12px;border:1px solid var(--oro);border-radius:99px;padding:6px 14px;text-decoration:none;font-weight:700}
 footer .erp:hover{background:var(--oro);color:var(--ink)}
 .empty{padding:30px 0;opacity:.7}
+.badge{background:#e3f1e8;border-left:3px solid var(--bosque);border-radius:4px;padding:4px 8px;font-size:13px;font-weight:500}
 @media(max-width:760px){.hero{min-height:0;padding:44px 0}.hero::before{background:rgba(28,43,36,.74)}.alt button{grid-template-columns:130px 1fr;font-size:14px}.tabs input{margin-left:0;width:100%}}
 @media(prefers-reduced-motion:reduce){aside{transition:none}html{scroll-behavior:auto}}
 </style>
@@ -181,14 +182,16 @@ const GR={n:"Condición",o:["Granos"]};
 const MO={n:"Condición",o:["Molido"]};
 const col=o=>({n:"Color",o});
 const P=[];
-const MAYOR_KG=5,UTENS_MIN=10,EMP_MIN=500,CURSO_MIN=2,DESC=0.10,PONCHE_MIN=3,PONCHE_DESC=0.1111; // mínimos y porcentaje de descuento
+const MAYOR_KG=5,UTENS_MIN=10,EMP_MIN=3,CURSO_MIN=2,DESC=0.10,PONCHE_MIN=3,PONCHE_DESC=0.11,MAYOR_DESC=0.165,MIEL_MIN=5,MERM_MIN=5,EMP_DESC=0.12; // mínimos y porcentaje de descuento
 const pct=d=>(d*100).toLocaleString("es-VE",{maximumFractionDigits:2});
 const kgOf=n=>{const m=n.match(/^(\d+(?:,\d+)?)\s*(kg|g)\b/i);if(!m)return 0;const x=parseFloat(m[1].replace(",","."));return m[2].toLowerCase()==="kg"?x:x/1000};
 const regla=(c,n)=>{
-  if(c==="Café"){const k=kgOf(n);return k?{g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,""),per:k,min:MAYOR_KG,t:"kg"}:null}
+  if(c==="Café"){const k=kgOf(n);return k?{g:n.replace(/^\d+(?:,\d+)?\s*(?:kg|g)\s+/i,""),per:k,min:MAYOR_KG,t:"kg",d:MAYOR_DESC}:null}
+  if(c==="Despensa"&&/^(Miel|Galón de miel)/.test(n))return{g:n,per:1,min:MIEL_MIN,t:"unidades",d:MAYOR_DESC};
+  if(c==="Despensa"&&/^Mermelada/.test(n))return{g:n,per:1,min:MERM_MIN,t:"unidades",d:MAYOR_DESC};
   if(c==="Despensa"&&/^Ponche/.test(n))return{g:n,per:1,min:PONCHE_MIN,t:"unidades",d:PONCHE_DESC};
   if(c==="Utensilios"&&!/Taza de peltre/.test(n))return{g:n,per:1,min:UTENS_MIN,t:"unidades"};
-  if(c==="Empaques")return{g:n.replace(/^Paquete de 100 /,""),per:100,min:EMP_MIN,t:"unidades"};
+  if(c==="Empaques")return{g:n.replace(/^Paquete de 100 /,""),per:1,min:EMP_MIN,t:"paquetes de 100",d:EMP_DESC};
   if(c==="Cursos")return{g:n,per:1,min:CURSO_MIN,t:"participante(s)"};
   return null;
 };
@@ -239,8 +242,8 @@ add(SV,"Servicio de selección de café",1.5,"QXDNlQDqjpLN","Retiramos defectos 
 add(SV,"Servicio de molienda de café",1.5,"2JYi7X4h4Ov5","Molienda industrial a la granulometría que pidas. Precio por kg procesado.",[],"kg");
 add(SV,"Servicio de empacado y sellado",1.5,"k1rvbmS0e369","Llenado y sellado de cinco líneas. El empaque va por tu cuenta. Precio por kg.",[],"kg");
 
-const NOTAS={"Despensa":`Ponche crema: lleva ${PONCHE_MIN} unidades o más (de cualquier sabor) y recibe ${pct(PONCHE_DESC)} % de descuento: cada uno queda en $16.`,"Utensilios":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
-  "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${DESC*100} % de descuento en ese café.`,"Cursos":`Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Servicios":`Todos los servicios cuestan $1,50 por kg: indica la cantidad de kg en el carrito.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} empaques o más del mismo tamaño (${EMP_MIN/100} paquetes) recibes ${DESC*100} % de descuento.`};
+const NOTAS={"Despensa":`Descuentos por volumen: miel (${MIEL_MIN} unidades o más del mismo producto) y mermelada (${MERM_MIN} unidades o más, de cualquier sabor) reciben ${pct(MAYOR_DESC)} %; ponche crema (${PONCHE_MIN} unidades o más, de cualquier sabor) recibe ${pct(PONCHE_DESC)} %.`,"Utensilios":`Compra ${UTENS_MIN} unidades o más del mismo producto y recibe ${DESC*100} % de descuento.`,
+  "Café":`Precio al mayor: compra ${MAYOR_KG} kg o más de un mismo café (sumando sus presentaciones, sin mezclar con otros cafés) y recibe ${pct(MAYOR_DESC)} % de descuento en ese café.`,"Cursos":`Los cursos se coordinan por WhatsApp: desde ${CURSO_MIN} participantes inscritos en el mismo curso, cada uno recibe ${DESC*100} % de descuento.`,"Servicios":`Todos los servicios cuestan $1,50 por kg: indica la cantidad de kg en el carrito.`,"Empaques":`Venta al mayor para tostadores y cafeterías. Con ${EMP_MIN} paquetes de 100 empaques o más del mismo tamaño (${EMP_MIN*100} unidades) recibes ${pct(EMP_DESC)} % de descuento.`};
 const money=n=>"$"+n.toLocaleString("es-VE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const $=s=>document.querySelector(s);
 const cats=["Todo",...new Set(P.map(p=>p.c))];
@@ -254,7 +257,7 @@ function tabs(){
 }
 function grid(){
   const l=P.filter(p=>(cat==="Todo"||p.c===cat)&&p.n.toLowerCase().includes(q.toLowerCase()));
-  $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${MIEL_IMG[p.i]||(IMG+p.i+".webp")}" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" por "+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
+  $("#grid").innerHTML=l.length?l.map(p=>`<article class="card"><img loading="lazy" src="${MIEL_IMG[p.i]||(IMG+p.i+".webp")}" alt="${p.n}" onerror="this.style.visibility='hidden'"><div class="in"><h3>${p.n}</h3><p>${p.d}</p>${p.r?`<div class="badge">Lleva ${p.r.min} ${p.r.t} o más y ahorra ${pct(p.r.d||DESC)} %</div>`:""}${p.v.map((v,j)=>`<select data-v="${j}" aria-label="${v.n}">${v.o.map(o=>`<option>${o}</option>`).join("")}</select>`).join("")}<div class="foot"><span class="price">${money(p.p)}${p.u?" por "+p.u:""}</span><button class="add" data-a="${p.id}">Agregar</button></div></div></article>`).join(""):`<p class="empty">No hay productos con esa búsqueda.</p>`;
 }
 const prod=c=>P[parseInt(c.k)];
 const kgf=n=>n.toLocaleString("es-VE",{maximumFractionDigits:2});
